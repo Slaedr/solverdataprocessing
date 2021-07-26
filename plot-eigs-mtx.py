@@ -12,6 +12,9 @@ def get_eigenvalues(A):
     w = sp.linalg.eigvals(adense)
     minreal = np.min(w.real)
     print("Smallest real part of any eigenvalue = " + str(minreal))
+    if minreal < 0.0:
+        printf("NEGATIVE real part! Cannot plot x-axis on log scale")
+        exit(-1)
     return w
 
 def plot_eigvals(w, imageformatstring):
