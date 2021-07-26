@@ -45,9 +45,9 @@ def plot_curve(iterdict, solver_keys, opts, imageformatstring):
     '''
     Plot one plot for each case.
     '''
-    for casekey in datadict:
+    for casekey in iterdict:
         plt.close()
-        casename = datadict[casekey]
+        casename = iterdict[casekey]
         batch_size = casename['batch_size']
         print("Batch size is " + str(batch_size))
         for isolver in range(len(solver_keys)):
