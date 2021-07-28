@@ -21,7 +21,7 @@ def get_solver_keys(filename):
 
 
 def get_data_from_file(filename, solver_keys, batch_mult):
-    # Get batch size[0], total apply time[1] and component apply time[2]
+    # Get batch size, total apply time and component apply time
     batch_size = 0
     data = np.zeros((len(solver_keys),2))
     infile = open(filename, 'r')
@@ -45,7 +45,7 @@ def get_data_from_file(filename, solver_keys, batch_mult):
     filedict['timings'] = data
     return filedict
 
-def plot_curve(iterdict, solver_keys, opts, imageformatstring):
+def plot_curve(iterdict, solver_keys, imageformatstring):
     '''
     Plot one plot for all cases.
     '''
@@ -65,7 +65,7 @@ def plot_curve(iterdict, solver_keys, opts, imageformatstring):
     timings = np.zeros((len(iterdict),len(dep_keys),2))
     ref_times = np.zeros((len(iterdict),2));
     icase = 0
-    for casekey in iterdict:
+    for casekey in sorted(iterdict):
         cased = iterdict[casekey]
         ref_times[icase,:] = cased['timings'][i_direct,:]
         i_dep_solver = 0
@@ -76,7 +76,7 @@ def plot_curve(iterdict, solver_keys, opts, imageformatstring):
             i_dep_solver += 1
         icase += 1
 
-    x_labels = [ casekey for casekey in iterdict ]
+    x_labels = [ casekey for casekey in sorted(iterdict) ]
     x = np.arange(len(x_labels))
     width = 0.24
     fig,ax = plt.subplots()
@@ -85,7 +85,6 @@ def plot_curve(iterdict, solver_keys, opts, imageformatstring):
         plt.bar(x + isolver*width, ref_times[:,1]/timings[:,isolver,1], 0.8*width, align='edge', tick_label=x_labels, label=solver)
     ax.set_yscale('log') 
     plt.legend(loc="best", fontsize="medium")
-    #plt.legend(loc="upper left", fontsize="medium")
     plt.xlabel("Problem")
     plt.ylabel("Speedup w.r.t. dense direct solver")
     plt.grid('on')
@@ -93,15 +92,6 @@ def plot_curve(iterdict, solver_keys, opts, imageformatstring):
     return
 
 if __name__ == "__main__":
-
-    opts = { \
-         "marklist" : ['.', 'x', '+', '^', 'v', '<', '>', 'd'],
-         "colorlist" : ['k', 'b', 'r', 'g', 'c', 'm', 'orange', 'pink'],
-         "linetype" : ['-', '--', '-.', ':', '--', '-.', '--',':'],
-         "linewidth" : 0.75,
-         "marksize" : 5,
-         "markedgewidth" : 1 \
-         } 
 
     curdir = os.getcwd()
 
@@ -130,4 +120,4 @@ if __name__ == "__main__":
             assert(batch_mult == 192)
             file_dict = get_data_from_file(filename, solver_keys, batch_mult)
             datadict[casename] = file_dict
-    plot_curve(datadict, solver_keys, opts, "png")
+    plot_curve(datadict, solver_keys, "png")
