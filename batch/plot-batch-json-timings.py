@@ -76,6 +76,8 @@ def plot_per_case(datadict, solver_keys, opts, imageformatstring):
         num_dupl = len(casename)
         #plotarrs = []
         batchsizes = np.zeros(num_dupl)
+        maxtime = 0.0
+        mintime = 10000.0
         for isolver in range(len(solver_keys)):
             #plotarrs.append(np.zeros(num_dupl,2))
             timings = np.zeros((num_dupl, 2))
@@ -96,8 +98,17 @@ def plot_per_case(datadict, solver_keys, opts, imageformatstring):
                     color=opts['colorlist'][isolver], \
                     marker=opts['marklist'][isolver], \
                     label= solver_keys[isolver])
-        #plt.legend(loc="best", fontsize="medium")
-        plt.legend(loc="upper left", fontsize="medium")
+            thismax = np.max(timings[:,1])
+            thismin = np.min(timings[:,1])
+            if thismax > maxtime:
+                maxtime = thismax
+            if thismin < mintime:
+                mintime = thismin
+        plt.legend(loc="best", fontsize="medium")
+        plt.tight_layout()
+        yrange = maxtime-mintime
+        plt.ylim(mintime-0.1*yrange, maxtime+0.1*yrange)
+        #plt.legend(loc="upper left", fontsize="medium")
         plt.xlabel("No. matrices in the batch")
         plt.ylabel("Time (s)")
         plt.grid('on')

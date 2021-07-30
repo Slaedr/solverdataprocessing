@@ -56,8 +56,8 @@ def plot_curve(normdict, solver_keys, opts, imageformatstring, normtype, relchec
         casename = normdict[casekey]
         batch_size = casename['batch_size']
         print("Batch size is " + str(batch_size))
-        maxnorm = 20
-        minnorm = -20
+        maxnorm = 0.0
+        minnorm = 1e10
         for isolver in range(len(solver_keys)):
             norms = np.zeros((batch_size))
             b_norms = np.zeros((batch_size))
@@ -75,7 +75,9 @@ def plot_curve(normdict, solver_keys, opts, imageformatstring, normtype, relchec
                 plt.ylabel("Log(10) residual 2-norm")
                 maxnorml = np.max(norms[:])
                 minnorml = np.min(norms[:])
-                print("Maximum norm = " + str(maxnorml))
+                print("Max norm = " + str(maxnorml))
+                print("Min norm = " + str(minnorml))
+                print()
             else:
                 plt.plot(np.log10(norms[:]/b_norms[:]), lw=opts['linewidth'], ls=opts['linetype'][isolver], \
                         color=opts['colorlist'][isolver], \
@@ -94,19 +96,16 @@ def plot_curve(normdict, solver_keys, opts, imageformatstring, normtype, relchec
             if minnorml < minnorm:
                 minnorm = minnorml
         plt.legend(loc="best", fontsize="medium")
-        #plt.legend(loc="upper left", fontsize="medium")
 
-        if minnorm < 1e-30:
-            if normtype == "relative":
-                minnorm = 1e-30
-            else:
-                minnorm = 1e-40
+        if minnorm < 1e-50:
+            minnorm = 1e-50
         if normtype == "absolute":
             if maxnorm > 1e-12:
-                plt.ylim(0.9*np.log10(minnorm), -12)
+                maxnorm = 1e-12
         else:
             if maxnorm > 1:
-                plt.ylim(0.9*np.log10(minnorm), 0)
+                maxnorm = 1.0
+        plt.ylim(np.log10(0.5*minnorm), np.log10(10*maxnorm))
         plt.xlabel("Matrix index in the batch")
         plt.grid('on')
         outfname = casekey + "-" + normtype + "-resnorms." + imageformatstring
