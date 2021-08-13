@@ -14,6 +14,8 @@ import re
 import numpy as np
 from matplotlib import pyplot as plt
 
+textsize = 16
+
 def get_data_from_file(filename, solver_keys, batch_mult):
     # Get batch size[0], total apply time[1] and component apply time[2]
     batch_size = 0
@@ -52,24 +54,25 @@ def sort_multiple(base, dependent):
     # Simple insertion sort
     # depenent is a numpy 2D array
     N = len(base)
-    print("Sorting array with nrows " + str(N))
+    m = dependent.shape[1]
     for i in range(N-1):
         maxn = 0
         for j in range(N-i):
-            if base[j] > maxn:
+            if base[j] > base[maxn]:
                 maxn = j
         temp = base[maxn]
         base[maxn] = base[N-i-1]
         base[N-i-1] = temp
-        temp = np.zeros((1,dependent.shape[1]))
-        temp[:] = dependent[maxn,:]
+        temp = np.zeros((1,m))
+        temp[0,:] = dependent[maxn,:]
         dependent[maxn,:] = dependent[N-i-1,:]
-        dependent[N-i-1,:] = temp[:]
+        dependent[N-i-1,:] = temp[0,:]
 
 def plot_per_case(datadict, solver_keys, opts, imageformatstring):
     '''
     Plot one plot for each case.
     '''
+    plt.rcParams.update({'font.size': textsize})
     for casekey in datadict:
         plt.close()
         casename = datadict[casekey]
@@ -88,15 +91,11 @@ def plot_per_case(datadict, solver_keys, opts, imageformatstring):
                 timings[ipos,1] = filepart['timings'][isolver,1]
                 batchsizes[ipos] = filepart['batch_size']
                 ipos += 1
-            #sort_multiple(batchsizes, timings)
-            #plt.plot(batchsizes, timings[:,1], lw=opts['linewidth'], ls=opts['linetype'][isolver], \
-            #        color=opts['colorlist'][isolver], \
-            #        marker=opts['marklist'][isolver], ms=opts['marksize'], \
-            #        mew=opts['markedgewidth'], \
-            #        label= solver_keys[isolver])
-            plt.scatter(batchsizes, timings[:,1], lw=opts['linewidth'], \
-                    color=opts['colorlist'][isolver], \
-                    marker=opts['marklist'][isolver], \
+            sort_multiple(batchsizes, timings)
+            plt.plot(batchsizes, timings[:,1], lw=opts['linewidth'], \
+                    ls=opts['linetype'][isolver], color=opts['colorlist'][isolver], \
+                    marker=opts['marklist'][isolver], ms=opts['marksize'], \
+                    mew=opts['markedgewidth'], \
                     label= solver_keys[isolver])
             thismax = np.max(timings[:,1])
             thismin = np.min(timings[:,1])
@@ -112,7 +111,7 @@ def plot_per_case(datadict, solver_keys, opts, imageformatstring):
         plt.xlabel("No. matrices in the batch")
         plt.ylabel("Time (s)")
         plt.grid('on')
-        plt.savefig(casekey+"-plot." + imageformatstring, dpi=200, bbox_inches='tight')
+        plt.savefig(casekey+"-timings." + imageformatstring, dpi=200, bbox_inches='tight')
     return
 
 if __name__ == "__main__":

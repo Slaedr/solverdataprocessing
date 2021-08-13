@@ -10,6 +10,8 @@ import argparse
 import numpy as np
 from matplotlib import pyplot as plt
 
+textsize = 16
+
 def get_solver_keys(filename):
     infile = open(filename, 'r')
     db = json.load(infile)
@@ -51,6 +53,7 @@ def plot_curve(normdict, solver_keys, opts, imageformatstring, normtype, relchec
     '''
     Plot one plot for each case.
     '''
+    plt.rcParams.update({'font.size': textsize})
     for casekey in normdict:
         plt.close()
         casename = normdict[casekey]
