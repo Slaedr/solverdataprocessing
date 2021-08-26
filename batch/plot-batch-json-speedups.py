@@ -9,6 +9,7 @@ import json
 import re
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import ticker as tkr
 
 def get_solver_keys(filename):
     infile = open(filename, 'r')
@@ -82,8 +83,12 @@ def plot_curve(iterdict, solver_keys, imageformatstring):
     fig,ax = plt.subplots()
     for isolver in range(len(dep_keys)):
         solver = dep_keys[isolver]
-        plt.bar(x + isolver*width, ref_times[:,1]/timings[:,isolver,1], 0.8*width, align='edge', tick_label=x_labels, label=solver)
-    ax.set_yscale('log') 
+        plt.bar(x + isolver*width, ref_times[:,1]/timings[:,isolver,1], 0.8*width, align='edge', \
+                tick_label=x_labels, label=solver)
+    ax.set_yscale('log')
+    #ax.set_yticks([0.5, 1, 2, 3, 5, 7, 10, 20, 25])
+    #ax.get_yaxis().set_major_formatter(tkr.ScalarFormatter())
+    ##ax.get_yaxis().set_minor_formatter(tkr.ScalarFormatter())
     plt.legend(loc="best", fontsize="medium")
     plt.xlabel("Problem")
     plt.ylabel("Speedup w.r.t. dense direct solver")
