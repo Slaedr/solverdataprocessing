@@ -1,7 +1,7 @@
 #! /bin/env python3
 
 import math
-import argparse
+import os
 import scipy as sp
 import scipy.io
 import scipy.linalg
@@ -22,7 +22,8 @@ def get_eigenvalues(A):
         exit(-1)
     return w
 
-def plot_eigvals(w, imageformatstring):
+def plot_eigvals(w, casename, imageformatstring):
+    plt.close()
     plt.rcParams.update({'font.size': textsize})
     fig,ax = plt.subplots()
     ymax = w.imag.max()
@@ -44,10 +45,17 @@ def plot_eigvals(w, imageformatstring):
     plt.ylim(ymin, ymax)
     #plt.xscale('log')
     plt.grid('on')
-    plt.savefig("eigs." + imageformatstring, dpi=200, bbox_inches='tight')
+    plt.savefig(casename + "-eigs." + imageformatstring, dpi=200, bbox_inches='tight')
 
 if __name__ == "__main__":
-    A = sp.io.mmread("A_scaled.mtx")
-    w = get_eigenvalues(A)
-    imageformatstring = "png"
-    plot_eigvals(w, imageformatstring)
+    curdir = os.getcwd()
+    for file in os.listdir(curdir):
+        filename = os.fsdecode(file)
+        if filename.endswith(".mtx"):
+            print("Found " + filename)
+            split_ = filename.split('.')
+            casename = split_[0]
+            A = sp.io.mmread(filename)
+            w = get_eigenvalues(A)
+            imageformatstring = "png"
+            plot_eigvals(w, casename, imageformatstring)

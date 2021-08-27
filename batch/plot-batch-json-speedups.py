@@ -86,8 +86,8 @@ def plot_curve(iterdict, solver_keys, imageformatstring):
         plt.bar(x + isolver*width, ref_times[:,1]/timings[:,isolver,1], 0.8*width, align='edge', \
                 tick_label=x_labels, label=solver)
     ax.set_yscale('log')
-    #ax.set_yticks([0.5, 1, 2, 3, 5, 7, 10, 20, 25])
-    #ax.get_yaxis().set_major_formatter(tkr.ScalarFormatter())
+    ax.set_yticks([0.5, 1, 2, 3, 5, 7, 10, 20, 30, 40])
+    ax.get_yaxis().set_major_formatter(tkr.ScalarFormatter())
     ##ax.get_yaxis().set_minor_formatter(tkr.ScalarFormatter())
     plt.legend(loc="best", fontsize="medium")
     plt.xlabel("Problem")
