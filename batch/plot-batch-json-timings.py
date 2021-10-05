@@ -14,6 +14,8 @@ import re
 import numpy as np
 from matplotlib import pyplot as plt
 
+from utils import sort_multiple
+
 textsize = 16
 
 def get_data_from_file(filename, solver_keys, batch_mult):
@@ -49,24 +51,6 @@ def get_solver_keys(filename):
     for key in db[0]:
         solver_keys.append(key)
     return solver_keys
-
-def sort_multiple(base, dependent):
-    # Simple insertion sort
-    # depenent is a numpy 2D array
-    N = len(base)
-    m = dependent.shape[1]
-    for i in range(N-1):
-        maxn = 0
-        for j in range(N-i):
-            if base[j] > base[maxn]:
-                maxn = j
-        temp = base[maxn]
-        base[maxn] = base[N-i-1]
-        base[N-i-1] = temp
-        temp = np.zeros((1,m))
-        temp[0,:] = dependent[maxn,:]
-        dependent[maxn,:] = dependent[N-i-1,:]
-        dependent[N-i-1,:] = temp[0,:]
 
 def plot_per_case(datadict, solver_keys, opts, imageformatstring):
     '''
