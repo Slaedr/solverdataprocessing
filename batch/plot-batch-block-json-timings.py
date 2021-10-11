@@ -11,6 +11,7 @@ We assume:
 import os
 import json
 import re
+import argparse
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -51,33 +52,29 @@ def get_data_from_block_file(filename, batch_mult):
         times.append(db[0]['solver'][key]['apply']['time'])
     return batch_size, times
 
-def plot_per_case(batch_sizes, data, labels, opts, imageformatstring):
+def plot_per_case(batch_sizes, data, labels, opts, imageformatstring, is_log):
     plt.rcParams.update({'font.size': textsize})
     plt.close()
-    maxtime = 0.0
-    mintime = 10000.0
     assert(len(batch_sizes) == len(data))
     for i in range(len(batch_sizes)):
         times = np.zeros((len(data[i]),1))
         times[:,0] = data[i][:]
         bsizes = np.array(batch_sizes[i], dtype=int)
         sort_multiple(bsizes, times)
-        plt.plot(bsizes, times, lw=opts['linewidth'], \
-                ls=opts['linetype'][i], color=opts['colorlist'][i], \
-                marker=opts['marklist'][i], ms=opts['marksize'], \
-                mew=opts['markedgewidth'], \
-                label= labels[i])
-        thismax = np.max(data[i])
-        thismin = np.min(data[i])
-        if thismax > maxtime:
-            maxtime = thismax
-        if thismin < mintime:
-            mintime = thismin
+        if is_log:
+            plt.semilogy(bsizes, times, lw=opts['linewidth'], \
+                    ls=opts['linetype'][i], color=opts['colorlist'][i], \
+                    marker=opts['marklist'][i], ms=opts['marksize'], \
+                    mew=opts['markedgewidth'], \
+                    label= labels[i])
+        else:
+            plt.plot(bsizes, times, lw=opts['linewidth'], \
+                    ls=opts['linetype'][i], color=opts['colorlist'][i], \
+                    marker=opts['marklist'][i], ms=opts['marksize'], \
+                    mew=opts['markedgewidth'], \
+                    label= labels[i])
     plt.legend(loc="best", fontsize="medium")
     plt.tight_layout()
-    yrange = maxtime-mintime
-    plt.ylim(mintime-0.1*yrange, maxtime+0.1*yrange)
-    #plt.legend(loc="upper left", fontsize="medium")
     plt.xlabel("No. matrices in the batch")
     plt.ylabel("Time (s)")
     plt.grid('on')
@@ -94,6 +91,12 @@ if __name__ == "__main__":
          "marksize" : 5,
          "markedgewidth" : 1 \
          } 
+    
+    parser = argparse.ArgumentParser(
+        description = "Plot timing comparison of a batch problem, potentially against a block solution")
+    parser.add_argument('--log', help = "Plot \'absolute\' or \'relative\' norm",
+            action="store_true")
+    args = parser.parse_args()
 
     curdir = os.getcwd()
 
@@ -104,6 +107,8 @@ if __name__ == "__main__":
     for dire in os.listdir(curdir):
         dirname = os.fsdecode(dire)
         dirpath = curdir + os.sep + dirname
+        if not os.path.isdir(dirpath):
+            continue
         print("Found " + dirname)
         split_ = dirname.split('-')
         descript = split_[-1]
@@ -127,4 +132,4 @@ if __name__ == "__main__":
                 batch_sizes[-1].append(batch_size)
                 data[-1].append(times[0])
 
-    plot_per_case(batch_sizes, data, labels, opts, "png")
+    plot_per_case(batch_sizes, data, labels, opts, "png", args.log)
