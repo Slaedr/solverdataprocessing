@@ -3,11 +3,11 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 opts = { \
-     "marklist" : ['.', 'x', '+', '^', 'v', '<', '>', 'd'],
-     "colorlist" : ['k', 'b', 'r', 'g', 'c', 'm', 'orange', 'pink'],
+     "marklist" : ['+', '.', '+', '.', 'v', '<', '>', 'd', 'x', '^'],
+     "colorlist" : ['g', 'g', 'r', 'r', 'b', 'm', 'pink', 'k', 'c', 'orange'],
      "linetype" : ['-', '--', '-.', ':', '--', '-.', '--',':'],
      "linewidth" : 0.75,
-     "marksize" : 5,
+     "marksize" : 7,
      "markedgewidth" : 1 \
      } 
 
@@ -44,10 +44,9 @@ for filen in args.files:
 
 plt.xlabel("Batch size")
 plt.legend()
+plt.ylabel("Time (s)")
 if args.log:
-    plt.ylabel("Log time (log s)")
     plt.grid('on', which='both')
 else:
-    plt.ylabel("Time (s)")
     plt.grid('on')
 plt.savefig("timings." + "png", dpi=200, bbox_inches='tight')

@@ -101,12 +101,11 @@ def plot_per_case(datadict, solver_keys, plotlog, opts, imageformatstring):
         #plt.legend(loc="upper left", fontsize="medium")
         plt.tight_layout()
         plt.xlabel("No. matrices in the batch")
+        plt.ylabel("Time (ms)")
         if plotlog:
-            plt.ylabel("Log time (log ms)")
             plt.grid('on',which='both')
             plt.grid('on',which='minor', ls=':', color='0.5')
         else:
-            plt.ylabel("Time (ms)")
             yrange = maxtime-mintime
             plt.ylim(mintime-0.1*yrange, maxtime+0.1*yrange)
             plt.grid('on')
