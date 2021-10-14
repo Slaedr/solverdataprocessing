@@ -104,6 +104,7 @@ def plot_per_case(datadict, solver_keys, plotlog, opts, imageformatstring):
         if plotlog:
             plt.ylabel("Log time (log ms)")
             plt.grid('on',which='both')
+            plt.grid('on',which='minor', ls=':', color='0.5')
         else:
             plt.ylabel("Time (ms)")
             yrange = maxtime-mintime
