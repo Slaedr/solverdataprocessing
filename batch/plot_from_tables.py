@@ -42,8 +42,12 @@ for filen in args.files:
                 )
     i += 1
 
-plt.ylabel("Time (s)")
 plt.xlabel("Batch size")
 plt.legend()
-plt.grid('on')
+if args.log:
+    plt.ylabel("Log time (log s)")
+    plt.grid('on', which='both')
+else:
+    plt.ylabel("Time (s)")
+    plt.grid('on')
 plt.savefig("timings." + "png", dpi=200, bbox_inches='tight')
