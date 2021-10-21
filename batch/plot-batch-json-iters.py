@@ -9,6 +9,8 @@ import json
 import numpy as np
 from matplotlib import pyplot as plt
 
+textsize = 14
+
 def get_solver_keys(filename):
     infile = open(filename, 'r')
     db = json.load(infile)
@@ -45,6 +47,7 @@ def plot_curve(iterdict, solver_keys, opts, imageformatstring):
     '''
     Plot one plot for each case.
     '''
+    plt.rcParams.update({'font.size': textsize})
     for casekey in iterdict:
         plt.close()
         casename = iterdict[casekey]
@@ -59,8 +62,8 @@ def plot_curve(iterdict, solver_keys, opts, imageformatstring):
                     marker=opts['marklist'][isolver], ms=opts['marksize'], \
                     mew=opts['markedgewidth'], \
                     label= solver_keys[isolver])
-        #plt.legend(loc="best", fontsize="medium")
-        plt.legend(loc="upper left", fontsize="medium")
+        plt.legend(loc="best")
+        #plt.legend(loc="upper left", fontsize="medium")
         plt.xlabel("Matrix index in the batch")
         plt.ylabel("Iterations")
         plt.grid('on')
