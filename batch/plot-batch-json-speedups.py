@@ -84,14 +84,14 @@ def plot_curve(iterdict, solver_keys, imageformatstring):
     for isolver in range(len(dep_keys)):
         solver = dep_keys[isolver]
         plt.bar(x + isolver*width, ref_times[:,1]/timings[:,isolver,1], 0.8*width, align='edge', \
-                tick_label=x_labels, label=solver)
+                tick_label=x_labels, label="batched " + solver)
     ax.set_yscale('log')
     ax.set_yticks([0.5, 1, 2, 3, 5, 7, 10, 20, 30, 40])
     ax.get_yaxis().set_major_formatter(tkr.ScalarFormatter())
     ##ax.get_yaxis().set_minor_formatter(tkr.ScalarFormatter())
     plt.legend(loc="best", fontsize="medium")
     plt.xlabel("Problem")
-    plt.ylabel("Speedup w.r.t. dense direct solver")
+    plt.ylabel("Speedup w.r.t. batched dense direct solver")
     plt.grid('on')
     plt.savefig("largest_speedup." + imageformatstring, dpi=200, bbox_inches='tight')
     return
