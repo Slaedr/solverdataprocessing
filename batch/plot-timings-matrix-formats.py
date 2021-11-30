@@ -62,7 +62,7 @@ def get_data_from_file(filename, run_type, solver_name, batch_mult):
     filedict['timings'] = data
     return mat_format, filedict
 
-def plot_per_case(datadict, plotlog, opts, imageformatstring):
+def plot_per_case(datadict, plotlog, solver_name, opts, imageformatstring):
     '''
     Plot one plot for each case.
     '''
@@ -116,7 +116,7 @@ def plot_per_case(datadict, plotlog, opts, imageformatstring):
             yrange = maxtime-mintime
             plt.ylim(mintime-0.1*yrange, maxtime+0.1*yrange)
             plt.grid('on')
-        plt.savefig(casekey+"-timings." + imageformatstring, dpi=200, bbox_inches='tight')
+        plt.savefig(casekey+"-"+solver_name+"-timings." + imageformatstring, dpi=200, bbox_inches='tight')
     return
 
 if __name__ == "__main__":
@@ -154,32 +154,32 @@ if __name__ == "__main__":
     solver_keys,mat_format_keys = get_solver_and_matrix_format_keys(first_filename, args.run_type)
     print("Found runs " + str(mat_format_keys))
     print("Found solvers: " + str(solver_keys))
-    if len(solver_keys) > 1:
-        throw("More than one solver not supported!")
-    
-    for file in os.listdir(curdir):
-        filename = os.fsdecode(file)
-        if filename.endswith(".json"):
-            print("Found " + filename)
-            split_ = filename.split('-')
-            casename = split_[0]
-            batch_mult = int(split_[-1].split('.')[0])
-            print("Case " + casename + " with batch multiplier " + str(batch_mult))
-    
-            if casename not in datadict:
-                datadict[casename] = {}
-            mat_format, file_dict = get_data_from_file(filename, args.run_type, solver_keys[0],
-                    batch_mult)
-            if mat_format not in datadict[casename]:
-                datadict[casename][mat_format] = []
-            datadict[casename][mat_format].append(file_dict)
 
-    print("")
-    print("Found " + str(len(datadict)) + " different cases.")
-    for casen in datadict:
-        print("  Found " + str(len(datadict[casen])) + " different matrix types")
-        for mat_format in datadict[casen]:
-            print("      Found " + str(len(datadict[casen][mat_format])) + " different duplications")
+    for isolver in range(len(solver_keys)):
+    
+        for file in os.listdir(curdir):
+            filename = os.fsdecode(file)
+            if filename.endswith(".json"):
+                print("Found " + filename)
+                split_ = filename.split('-')
+                casename = split_[0]
+                batch_mult = int(split_[-1].split('.')[0])
+                print("Case " + casename + " with batch multiplier " + str(batch_mult))
+        
+                if casename not in datadict:
+                    datadict[casename] = {}
+                mat_format, file_dict = get_data_from_file(filename, args.run_type, solver_keys[isolver],
+                        batch_mult)
+                if mat_format not in datadict[casename]:
+                    datadict[casename][mat_format] = []
+                datadict[casename][mat_format].append(file_dict)
 
-    plot_per_case(datadict, args.log, opts, "png")
+        print("")
+        print("Found " + str(len(datadict)) + " different cases.")
+        for casen in datadict:
+            print("  Found " + str(len(datadict[casen])) + " different matrix types")
+            for mat_format in datadict[casen]:
+                print("      Found " + str(len(datadict[casen][mat_format])) + " different duplications")
+
+        plot_per_case(datadict, args.log, solver_keys[isolver], opts, "png")
 
